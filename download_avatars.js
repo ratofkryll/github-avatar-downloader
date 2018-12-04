@@ -14,8 +14,12 @@ if (!owner || !repo) {
 }
 
 // Checks if avatars directory exists. If not, creates it.
-if (!fs.existsSync('./avatars')) {
+if (!fs.existsSync('./avatars/')) {
   fs.mkdirSync('./avatars');
+};
+
+if (!fs.existsSync(`./avatars/${repo}`)) {
+  fs.mkdirSync(`./avatars/${repo}`);
 };
 
 function getRepoContributors (repoOwner, repoName, cb) {
@@ -46,6 +50,6 @@ getRepoContributors (owner, repo, function (err, result) {
   console.log('Errors: ', err);
   result.forEach(function (user) {
     console.log(`Downloading ${user.login}'s avatar...`)
-    downloadImageByURL(user.avatar_url, `./avatars/${user.login}.jpg`)
+    downloadImageByURL(user.avatar_url, `./avatars/${repo}/${user.login}.jpg`)
   });
 });
