@@ -4,6 +4,9 @@ var secrets = require('./secrets');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
+var owner = process.argv[2];
+var repo = process.argv[3];
+
 // Checks if avatars directory exists. If not, creates it.
 if (!fs.existsSync('./avatars')) {
   fs.mkdirSync('./avatars');
@@ -33,7 +36,7 @@ function downloadImageByURL (url, filepath) {
   console.log('Download complete!')
 };
 
-getRepoContributors ('jquery', 'jquery', function (err, result) {
+getRepoContributors (owner, repo, function (err, result) {
   console.log('Errors: ', err);
   result.forEach(function (user) {
     console.log(`Downloading ${user.login}'s avatar...`)
