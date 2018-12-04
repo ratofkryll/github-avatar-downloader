@@ -4,9 +4,10 @@ var secrets = require('./secrets');
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
+// Checks if avatars directory exists. If not, creates it.
 if (!fs.existsSync('./avatars')) {
   fs.mkdirSync('./avatars');
-}
+};
 
 function getRepoContributors (repoOwner, repoName, cb) {
   var options = {
@@ -19,32 +20,23 @@ function getRepoContributors (repoOwner, repoName, cb) {
   var parsedBody = [];
   request (options, function (err, res, body) {
     parsedBody = JSON.parse(body);
-    // console.log(parsedBody[0].login + '\'s Avatar URL: ' + parsedBody[0].avatar_url)
     cb(err, parsedBody);
   });
-}
+};
 
 function downloadImageByURL (url, filepath) {
   request.get(url)
   .on('error', function (err) {
     console.log('Error: ', err.statusCode)
   })
-  .on('response', function (response) {
-    console.log(`
-      Response Status Code: ${response.statusCode}\n
-      Response Status Message: ${response.statusMessage}\n
-      Response Headers: ${response.headers['content-type']}
-    `);
-  })
   .pipe(fs.createWriteStream(filepath));
-}
+  console.log('Download complete!')
+};
 
 getRepoContributors ('jquery', 'jquery', function (err, result) {
   console.log('Errors: ', err);
-  // result.forEach(function (user) {
-  //   console.log('Results: ', user.avatar_url);
-  // });
-  // console.log('Results: ', result[0].login + '\'s Avatar URL: ' + result[0].avatar_url);
+  result.forEach(function (user) {
+    console.log(`Downloading ${user.login}'s avatar...`)
+    downloadImageByURL(user.avatar_url, `./avatars/${user.login}.jpg`)
+  });
 });
-
-downloadImageByURL('https://avatars2.githubusercontent.com/u/2741?v=3&s=466', 'avatars/kvirani.jpg');
